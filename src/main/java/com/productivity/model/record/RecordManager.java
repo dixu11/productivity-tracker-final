@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 
 public class RecordManager {
     private ObservableList<Record> records;
-    private final FileRepository fileRepository;
+    private final FileRepository<Record> fileRepository;
 
     public RecordManager() {
         records = FXCollections.observableArrayList();
-        fileRepository = new FileRepository("records.bin");
+        fileRepository = new FileRepository<>("records.bin");
         loadAllData();
     }
 
@@ -25,6 +25,7 @@ public class RecordManager {
     //add should save! remove too
     public void addRecord(Record record) {
         records.add(record);
+        fileRepository.saveNew(record);
     }
 
     public ObservableList<Record> getRecords() {
@@ -41,7 +42,7 @@ public class RecordManager {
         records.addAll(allByDate);
     }
 
-    private List<Record> getAllByDate(LocalDate from, LocalDate to) {
+    public List<Record> getAllByDate(LocalDate from, LocalDate to) {
         List<Record> loaded = fileRepository.load();
        return loaded.stream()
                 .filter(record -> !record.getDate().isBefore(from) && !record.getDate().isAfter(to))
@@ -49,4 +50,8 @@ public class RecordManager {
     }
 
 
+    public void removeRecord(Record selected) {
+        records.remove(selected);
+        fileRepository.remove(selected);
+    }
 }

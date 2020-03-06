@@ -28,7 +28,6 @@ public class Launcher extends Application {
 
     @Override
     public void stop() throws Exception {
-        recordManager.saveData();
         categoryManager.saveData();
     }
 }

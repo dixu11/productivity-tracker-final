@@ -18,12 +18,15 @@ public class FileRepository<E> {
         this.fileName = fileName;
     }
 
-    public void save(ObservableList<E> records) {
+    public void save(ObservableList<E> data) {
+        save(new ArrayList<>(data));
+    }
+
+    private void save(List<E> data) {
         try {
-            List<E> asArray = new ArrayList<>(records); // bo ObservableList nie jest serializable
             FileOutputStream fos = new FileOutputStream(fileName);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(asArray);
+            oos.writeObject(data);
             oos.flush();
             oos.close();
         } catch (IOException e) {
@@ -48,4 +51,15 @@ public class FileRepository<E> {
         return data;
     }
 
+    public void saveNew(E element) {
+        List<E> oldList = load();
+        oldList.add(element);
+        save(oldList);
+    }
+
+    public void remove(E element) {
+        List<E> oldList = load();
+        oldList.remove(element);
+        save(oldList);
+    }
 }

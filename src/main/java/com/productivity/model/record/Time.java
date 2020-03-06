@@ -1,6 +1,7 @@
 package com.productivity.model.record;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Time implements Comparable<Time>, Serializable {
 
@@ -30,5 +31,18 @@ public class Time implements Comparable<Time>, Serializable {
 
     public int getMinutes() {
         return minutes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Time time = (Time) o;
+        return minutes == time.minutes;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(minutes);
     }
 }

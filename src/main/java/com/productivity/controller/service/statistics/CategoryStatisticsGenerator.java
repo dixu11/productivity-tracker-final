@@ -28,10 +28,18 @@ public class CategoryStatisticsGenerator extends Service<Map<Category, Double>> 
         Map<Category, Integer> minutesInCategories = categories.stream()
                 .collect(Collectors.toMap(category -> category, category -> totalMinutesForCategory(category, records)));
         double allMinutes = getSum(minutesInCategories);
-
-        return minutesInCategories.entrySet()
+        double allMinutesCorrected = eliminate0Value(allMinutes);
+        Map<Category, Double> collect = minutesInCategories.entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> entry.getKey(), entry ->  entry.getValue() * 100/allMinutes));
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue() * 100 / allMinutesCorrected));
+        return collect;
+    }
+
+    private double eliminate0Value(double allMinutes) {
+        if (allMinutes<1) {
+            return .00000000001;
+        }
+        return allMinutes;
     }
 
     private int getSum(Map<Category, Integer> minutesInCategories) {

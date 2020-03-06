@@ -5,7 +5,17 @@ Aktualizacja tabeli i rekordów
 godziny / minuty
 error - no category selected
 
+Nowe:
+dodać godziny/minuty przy wprowadzaniu
+kasowanie rekordów za pomocą del
+zaimplementować filtorwanie po datach
 
-cel dzienny
-timer
-pasek od timera
+Zadania:
+Małe:
+reagowanie na enter w oknach tekstowych
+przenieść pliki data do resources
+usunąć cel dzienny
+prezentować dane jako Time (odpowiednio dla godzin inaczej)
+Duże:
+zaimplementować wykres liniowy
+

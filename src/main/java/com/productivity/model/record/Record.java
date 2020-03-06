@@ -5,6 +5,8 @@ import com.productivity.model.category.CategoryType;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Random;
 
 //https://stackoverflow.com/questions/41265266/how-to-solve-inaccessibleobjectexception-unable-to-make-member-accessible-m/41265267
 // -> problem with gson serialization and LocalDate
@@ -18,7 +20,7 @@ public class Record implements Serializable {
 
     public Record(Category category, LocalDate date, String note, Time time) {
         this.category = category;
-        this.date = date;
+        this.date = date.minusDays(new Random().nextInt(60));
         this.note = note;
         this.time = time;
     }
@@ -60,6 +62,21 @@ public class Record implements Serializable {
         return category.getType();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Record record = (Record) o;
+        return Objects.equals(category, record.category) &&
+                Objects.equals(date, record.date) &&
+                Objects.equals(note, record.note) &&
+                Objects.equals(time, record.time);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(category, date, note, time);
+    }
 
     @Override
     public String toString() {
