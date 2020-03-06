@@ -26,7 +26,7 @@ public class TimeStatisticGeneratorForWeeks extends TimeStatisticsGenerator {
         do {
             monday = firstDay.plusWeeks(addedWeeks++);
             allDates.add(monday);
-        } while (!monday.isAfter(to));
+        } while (!monday.plusWeeks(1).isAfter(to));
         return allDates;
     }
 

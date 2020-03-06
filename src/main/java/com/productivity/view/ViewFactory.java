@@ -31,16 +31,16 @@ public class ViewFactory {
     public void showMainWindow() {
         BaseController controller = new MainWindowController(recordManager, categoryManager, this,
                 "/view/MainWindow.fxml");
-        initializeStage(controller);
+        initializeStage(controller, "Productivity Tracker");
     }
 
     public void showCategorySettings(){
         BaseController controller = new CategorySettingsController(recordManager,categoryManager, this,
                 "/view/CategorySettings.fxml");
-        initializeStage(controller);
+        initializeStage(controller, "Category editor");
     }
 
-    public void initializeStage(BaseController controller) {
+    public void initializeStage(BaseController controller, String title) {
         FXMLLoader fxmlLoader = new FXMLLoader(
                 getClass().getResource(controller.getFxmlName()));
         fxmlLoader.setController(controller);
@@ -55,6 +55,7 @@ public class ViewFactory {
         Scene scene = new Scene(root);
         Stage stage = new Stage();
         stage.setScene(scene);
+        stage.setTitle(title);
         activeStages.add(stage);
         stage.show();
     }
@@ -62,5 +63,12 @@ public class ViewFactory {
     public void closeStage(Stage stageToClose) {
         stageToClose.close();
         activeStages.remove(stageToClose);
+    }
+
+    public Stage getAnyActiveStageOrNull() {
+        if (activeStages.isEmpty()) {
+            return null;
+        }
+        return activeStages.get(0);
     }
 }

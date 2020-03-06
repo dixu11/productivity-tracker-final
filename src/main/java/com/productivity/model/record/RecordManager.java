@@ -4,6 +4,7 @@ import com.productivity.model.FileRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ public class RecordManager {
 
     public RecordManager() {
         records = FXCollections.observableArrayList();
-        fileRepository = new FileRepository<>("records.bin");
+        fileRepository = new FileRepository<>(new File(FileRepository.RECORDS_FILE_NAME));
         loadAllData();
     }
 

@@ -16,28 +16,30 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="659.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="372.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#optionsAction" text="Options" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveAction" text="Save" />
+              <MenuItem mnemonicParsing="false" onAction="#categoriesEditorAction" text="Category editor" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveAction" text="Export to CSV" />
                   <MenuItem mnemonicParsing="false" onAction="#closeAction" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#aboutAction" text="About" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
-      <Label layoutX="14.0" layoutY="78.0" text="Add record:">
+      <Label layoutX="18.0" layoutY="85.0" text="Add record:">
          <font>
             <Font size="16.0" />
          </font></Label>
@@ -52,13 +54,13 @@
          </font></Label>
       <TextField fx:id="recordTimeHourField" alignment="CENTER_RIGHT" layoutX="165.0" layoutY="163.0" prefHeight="25.0" prefWidth="48.0" promptText="hours" />
       <Button layoutX="221.0" layoutY="255.0" mnemonicParsing="false" onAction="#addAction" prefHeight="25.0" prefWidth="41.0" text="Add" />
-      <TableView fx:id="recordTable" layoutY="368.0" onKeyPressed="#recordKeyAction" prefHeight="232.0" prefWidth="567.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="368.0">
+      <TableView fx:id="recordTable" layoutY="435.0" onKeyPressed="#recordKeyAction" prefHeight="224.0" prefWidth="633.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="435.0">
         <columns>
-          <TableColumn fx:id="dateCol" prefWidth="75.0" text="Date" />
+          <TableColumn fx:id="dateCol" text="Date" />
           <TableColumn fx:id="categoryCol" prefWidth="75.0" text="Category" />
-            <TableColumn fx:id="categoryTypeCol" prefWidth="67.0" text="Type" />
-            <TableColumn fx:id="timeCol" prefWidth="66.0" text="Time" />
-            <TableColumn fx:id="noteCol" prefWidth="275.0" text="Note" />
+            <TableColumn fx:id="categoryTypeCol" prefWidth="71.0" text="Type" />
+            <TableColumn fx:id="timeCol" prefWidth="71.0" text="Time" />
+            <TableColumn fx:id="noteCol" prefWidth="316.0" text="Note" />
         </columns>
       </TableView>
       <Label layoutX="20.0" layoutY="201.0" text="Note:">
@@ -67,27 +69,18 @@
          </font></Label>
       <TextArea fx:id="recordNoteArea" layoutX="76.0" layoutY="203.0" prefHeight="45.0" prefWidth="187.0" />
       <Button layoutX="156.0" layoutY="255.0" mnemonicParsing="false" onAction="#clearAction" prefHeight="25.0" prefWidth="48.0" text="Clear" />
-      <Label fx:id="errorLabel" alignment="TOP_CENTER" layoutX="35.0" layoutY="43.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="17.0" prefWidth="178.0" text="Have a nice day!" textOverrun="CLIP">
+      <Label fx:id="errorLabel" alignment="TOP_CENTER" layoutX="76.0" layoutY="44.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="17.0" prefWidth="178.0" text="Have a nice day!" textOverrun="CLIP">
          <font>
             <Font size="16.0" />
          </font></Label>
       <Button fx:id="editType" layoutX="221.0" layoutY="123.0" mnemonicParsing="false" onAction="#editTypeAction" prefHeight="25.0" prefWidth="41.0" text="Edit" />
-      <TabPane layoutX="275.0" layoutY="24.0" prefHeight="345.0" prefWidth="359.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="-1.0">
+      <TabPane layoutX="275.0" layoutY="24.0" prefHeight="411.0" prefWidth="359.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="-1.0">
         <tabs>
-          <Tab fx:id="categoryTab" text="Category distribution">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <PieChart fx:id="categoryChart" layoutX="-1.0" layoutY="-2.0" prefHeight="307.0" prefWidth="359.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
           <Tab fx:id="timeTab" text="Time spend">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="420.0" prefWidth="336.0">
                      <children>
-                        <LineChart fx:id="timeChart" layoutX="-8.0" prefHeight="315.0" prefWidth="366.0" AnchorPane.leftAnchor="-8.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
+                        <LineChart fx:id="timeChart" layoutX="-8.0" prefHeight="382.0" prefWidth="366.0" AnchorPane.leftAnchor="-8.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
                           <xAxis>
                             <NumberAxis side="BOTTOM" />
                           </xAxis>
@@ -99,16 +92,40 @@
                   </AnchorPane>
             </content>
           </Tab>
+          <Tab fx:id="categoryTab" text="Category distribution">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <PieChart fx:id="categoryChart" layoutX="-1.0" layoutY="-2.0" prefHeight="384.0" prefWidth="359.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
         </tabs>
       </TabPane>
-      <DatePicker fx:id="fromDate" editable="false" layoutX="19.0" layoutY="328.0" onAction="#fromAction" prefHeight="25.0" prefWidth="115.0" promptText="From" />
-      <DatePicker fx:id="toDate" editable="false" layoutX="147.0" layoutY="328.0" onAction="#toAction" prefHeight="25.0" prefWidth="115.0" promptText="To" />
+      <DatePicker fx:id="fromDate" editable="false" layoutX="20.0" layoutY="378.0" onAction="#fromAction" prefHeight="25.0" prefWidth="115.0" promptText="From" />
+      <DatePicker fx:id="toDate" editable="false" layoutX="148.0" layoutY="378.0" onAction="#toAction" prefHeight="25.0" prefWidth="115.0" promptText="To" />
       <TextField fx:id="recordTimeMinField" alignment="CENTER_RIGHT" layoutX="229.0" layoutY="164.0" prefHeight="25.0" prefWidth="34.0" promptText="min" />
       <Label layoutX="219.0" layoutY="168.0" text=":" />
-      <Label layoutX="14.0" layoutY="288.0" text="Set range:">
+      <Label layoutX="14.0" layoutY="294.0" text="Set range:">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
+      <ChoiceBox fx:id="autoRangeSelect" layoutX="116.0" layoutY="330.0" prefHeight="25.0" prefWidth="147.0" />
+      <Label layoutX="20.0" layoutY="333.0" text="Auto range:">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Button layoutX="23.0" layoutY="36.0" mnemonicParsing="false" onAction="#saveButtonAction" prefHeight="33.0" prefWidth="34.0">
+         <graphic>
+            <ImageView fitHeight="42.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icon/downloadButton.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </AnchorPane>

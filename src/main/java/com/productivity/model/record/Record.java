@@ -20,9 +20,11 @@ public class Record implements Serializable {
 
     public Record(Category category, LocalDate date, String note, Time time) {
         this.category = category;
-        this.date = date.minusDays(new Random().nextInt(60));
         this.note = note;
+        this.date = date;
         this.time = time;
+//        this.date = date.minusDays(new Random().nextInt(7)); //debug
+//        this.time = new Time(new Random().nextInt(100));
     }
 
     public String getNote() {

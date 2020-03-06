@@ -45,6 +45,7 @@ public class CategorySettingsController extends  BaseController {
     @FXML
     private TextField toRemoveText;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initCategoriesList();
@@ -103,6 +104,7 @@ public class CategorySettingsController extends  BaseController {
 
     @FXML
     void removeAction() {
+        //fixme also refreshes charts, asks if you shure and removes all records of that category
         Category selected = categoriesList.getSelectionModel().getSelectedItem();
         categoriesList.getItems().remove(selected);
         categoryManager.removeCategory(selected);

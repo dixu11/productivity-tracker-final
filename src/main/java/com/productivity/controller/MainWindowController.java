@@ -1,5 +1,6 @@
 package com.productivity.controller;
 
+import com.productivity.controller.service.record.CSVFileGenerator;
 import com.productivity.controller.service.statistics.*;
 import com.productivity.model.category.Category;
 import com.productivity.model.category.CategoryManager;
@@ -11,7 +12,11 @@ import com.productivity.model.category.CategoryType;
 import com.productivity.model.record.Time;
 import com.productivity.view.ViewFactory;
 import com.productivity.view.axisModes.TimeChartXAxisMode;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
@@ -19,11 +24,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static com.productivity.controller.service.statistics.TimeChartMode.*;
 
 public class MainWindowController extends BaseController {
 
@@ -84,6 +96,9 @@ public class MainWindowController extends BaseController {
     @FXML
     private DatePicker toDate;
 
+    @FXML
+    private ChoiceBox<TimeChartMode> autoRangeSelect;
+
 
     public MainWindowController(RecordManager recordManager, CategoryManager categoryManager, ViewFactory viewFactory, String fxmlName) {
         super(recordManager, categoryManager, viewFactory, fxmlName);
@@ -93,7 +108,9 @@ public class MainWindowController extends BaseController {
     public void initialize(URL location, ResourceBundle resources) {
         setUpTableView();
         setUpRecordTimeSelecting();
-        setUpDatePickers();
+        setUpAutoRangeSelecting();
+        setUpAutoRangeModeAction();
+        setSelectMode(DAYS);
         setUpTimeChartAxises();
         filterAndUpdateRecords();
     }
@@ -115,15 +132,67 @@ public class MainWindowController extends BaseController {
         }
     }
 
-    private void setUpDatePickers() {
-        fromDate.setValue(LocalDate.now().minusWeeks(1));
-        toDate.setValue(LocalDate.now());
+    private void setUpAutoRangeSelecting() {
+        ObservableList<TimeChartMode> modes = FXCollections.observableArrayList();
+        modes.addAll(Arrays.asList(TimeChartMode.values()));
+        autoRangeSelect.setItems(modes);
+    }
+
+    private void setUpAutoRangeModeAction() {
+        autoRangeSelect.setOnAction(event -> setSelectMode(autoRangeSelect.getValue()));
+    }
+
+    private void setSelectMode(TimeChartMode mode) {
+        updateRange(mode);
+        updateDatePickersLock(mode);
+    }
+
+    private void updateRange(TimeChartMode mode) {
+        autoRangeSelect.setValue(mode);
+        switch (mode) {
+            case DAYS:
+                fromDate.setValue(LocalDate.now().minusWeeks(1));
+                toDate.setValue(LocalDate.now());
+                break;
+            case WEEKS:
+                fromDate.setValue(LocalDate.now().minusWeeks(4));
+                toDate.setValue(LocalDate.now());
+                break;
+            case MONTHS:
+                fromDate.setValue(LocalDate.now().minusMonths(6));
+                toDate.setValue(LocalDate.now());
+                break;
+            case YEARS:
+                fromDate.setValue(LocalDate.now().minusYears(4));
+                toDate.setValue(LocalDate.now());
+                break;
+            case CUSTOM:
+        }
+    }
+
+    private void updateDatePickersLock(TimeChartMode mode) {
+        if (mode == CUSTOM) {
+            unlockDatePickers();
+        } else {
+            lockDatePickers();
+        }
+    }
+
+    private void unlockDatePickers() {
+        fromDate.setDisable(false);
+        toDate.setDisable(false);
+    }
+
+    private void lockDatePickers() {
+        fromDate.setDisable(true);
+        toDate.setDisable(true);
     }
 
     private void setUpTimeChartAxises() {
         prepareTimeChartYAxis();
         prepareTimeChartXAxis();
     }
+
     private void prepareTimeChartXAxis() {
         NumberAxis axis = (NumberAxis) timeChart.getXAxis();
         axis.setAutoRanging(false);
@@ -228,7 +297,6 @@ public class MainWindowController extends BaseController {
     @FXML
     void editTypeAction() {
         viewFactory.showCategorySettings();
-
     }
 
     @FXML
@@ -243,24 +311,27 @@ public class MainWindowController extends BaseController {
 
     @FXML
     void closeAction() {
-
+        Platform.exit();
     }
 
     @FXML
-    void lockAction() {
-
+    void aboutAction() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About Productivity Tracker");
+        alert.setHeaderText("Simple desktop app that tracks your productivity.");
+        alert.setContentText("Some text about actual version, author, available features and technologies used to build this app.");
+        alert.showAndWait();
     }
 
     @FXML
-    void optionsAction() {
-
+    void categoriesEditorAction() {
+        viewFactory.showCategorySettings();
     }
 
     @FXML
     void saveAction() {
-
+        saveRecords();
     }
-
 
 
     void filterAndUpdateRecords() {
@@ -312,13 +383,14 @@ public class MainWindowController extends BaseController {
     }
 
     private void updateTimeChart() {
-        updateTimeChartSeries();
+        addNewSeries();
+        removeOldSeries();
         updateTimeChartXAxisMode();
-        //removeOldSeries(); //todo
         TimeChartUpdater updater = new TimeChartUpdater(this, categoryManager, recordManager);
         updater.start();
-        updater.setOnSucceeded(e-> addComputedSeriesData(updater));
+        updater.setOnSucceeded(e -> addComputedSeriesData(updater));
     }
+
 
     private void updateTimeChartXAxisMode() {
         TimeChartMode mode = getTimeChartMode();
@@ -334,21 +406,29 @@ public class MainWindowController extends BaseController {
         Map<String, List<XYChart.Data<Number, Number>>> newData = updater.getValue();
         for (String categoryName : newData.keySet()) {
             var series = findSeriesWithName(categoryName);
-           series.ifPresent(s -> {
-               s.getData().clear();
-               s.getData().addAll(newData.get(categoryName));
-           });
+            series.ifPresent(s -> {
+                s.getData().clear();
+                s.getData().addAll(newData.get(categoryName));
+            });
         }
 
     }
 
     private Optional<XYChart.Series<Number, Number>> findSeriesWithName(String name) {
-      return   timeChart.getData().stream()
+        return timeChart.getData().stream()
                 .filter(series -> series.getName().equalsIgnoreCase(name))
                 .findAny();
     }
 
-    private void updateTimeChartSeries() {
+    private void removeOldSeries() {
+        var allSeries = timeChart.getData();
+        var toRemove = allSeries.stream()
+                .filter(series -> !categoryManager.hasCategoryWith(series.getName()))
+                .collect(Collectors.toList());
+        allSeries.removeAll(toRemove);
+    }
+
+    private void addNewSeries() {
         var allSeries = timeChart.getData();
         categoryManager.getCategories().stream()
                 .filter(category -> !containsSeriesForThisCategory(category))
@@ -365,7 +445,7 @@ public class MainWindowController extends BaseController {
                 .anyMatch(series -> series.getName().equalsIgnoreCase(category.getName()));
     }
 
-  public    TimeChartMode getTimeChartMode() {
+    public TimeChartMode getTimeChartMode() {
         LocalDate from = fromDate.getValue();
         LocalDate to = toDate.getValue();
         TimeChartModePicker modePicker = new TimeChartModePicker();
@@ -383,4 +463,23 @@ public class MainWindowController extends BaseController {
     public LineChart<Number, Number> getTimeChart() {
         return timeChart;
     }
+
+
+    @FXML
+    void saveButtonAction(ActionEvent event) {
+        saveRecords();
+    }
+
+    private void saveRecords() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("myWorkRecords.csv");
+        fileChooser.setTitle("Save records to CSV");
+        File file = fileChooser.showSaveDialog(viewFactory.getAnyActiveStageOrNull());
+        if (file != null) {
+            CSVFileGenerator csvFileGenerator = new CSVFileGenerator(file);
+            csvFileGenerator.start();
+        }
+    }
+
+
 }

@@ -5,13 +5,15 @@ import com.productivity.model.record.Record;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
+
 public class CategoryManager {
     private ObservableList<Category> categories;
     private final FileRepository<Category> fileRepository;
 
     public CategoryManager() {
         categories = FXCollections.observableArrayList();
-        fileRepository = new FileRepository<>("categories.bin");
+        fileRepository = new FileRepository<>(new File(FileRepository.CATEGORY_FILE_NAME));
         loadData();
     }
     public void addCategory(Category category) {
@@ -39,4 +41,5 @@ public class CategoryManager {
     public void removeCategory(Category category) {
         categories.remove(category);
     }
+
 }

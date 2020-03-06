@@ -4,6 +4,8 @@ różne rodzaje kategorii -> nowe rodzaje -> okno edycji kategorii
 Aktualizacja tabeli i rekordów
 godziny / minuty
 error - no category selected
+zaimplementować wykres liniowy
+auto range select + lock
 
 Nowe:
 dodać godziny/minuty przy wprowadzaniu
@@ -17,5 +19,6 @@ przenieść pliki data do resources
 usunąć cel dzienny
 prezentować dane jako Time (odpowiednio dla godzin inaczej)
 Duże:
-zaimplementować wykres liniowy
+poprawić usuwanie kategorii
+
 

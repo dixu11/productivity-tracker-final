@@ -1,7 +1,7 @@
 package com.productivity.controller.service.statistics;
 
 public enum  TimeChartMode {
-    DAYS("Days"), WEEKS("Weeks"), MONTHS("Months"), YEARS("Years");
+    DAYS("Days"), WEEKS("Weeks"), MONTHS("Months"), YEARS("Years"), CUSTOM("Custom");
 
     private String name;
 

@@ -4,7 +4,6 @@ import com.productivity.model.category.Category;
 import com.productivity.model.category.CategoryManager;
 import com.productivity.model.record.RecordManager;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +40,7 @@ public class TimeStatisticsGeneratorForMonths extends TimeStatisticsGenerator {
         do {
             firstDayOfTheMonth = firstDay.plusMonths(addedMonths++);
             allDates.add(firstDayOfTheMonth);
-        } while (!firstDayOfTheMonth.isAfter(to));
+        } while (!firstDayOfTheMonth.plusMonths(1).isAfter(to));
         return allDates;
     }
 
